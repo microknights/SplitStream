@@ -30,3 +30,8 @@ This example shows how 1 stream is read by 2 in parallel, and you can of cause h
 So whenever a new stream is needed simply call `GetForwardReadOnlyStream()` on the `ReadableSplitStream`.
 
 Please notice that the party starts when `StartReadAhead()` is called, else....
+
+## Nuget package
+```
+PM> Install-Package MicroKnights.IO.SplitStream -Version 1.0.0
+```
