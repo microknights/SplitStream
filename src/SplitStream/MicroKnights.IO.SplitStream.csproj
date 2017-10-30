@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <AssemblyName>MicroKnights.IO</AssemblyName>
+    <RootNamespace>MicroKnights.IO.Streams</RootNamespace>
+    <PackageId>MicroKnights.IO.SplitStream</PackageId>
+    <Authors>Frank løvendahl Nielsen</Authors>
+    <Company>MicroKnights</Company>
+    <Product />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>
