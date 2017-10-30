@@ -83,7 +83,7 @@ namespace MicroKnights.IO.Test
             using (var inputMemoryStream = inputSplitStream.GetForwardReadOnlyStream())
             using (var outputMemoryStream = new MemoryStream())
             {
-                inputSplitStream.StartReadAHead();
+                inputSplitStream.StartReadAhead();
 
                 Parallel.Invoke(() =>
                 {

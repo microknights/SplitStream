@@ -38,7 +38,7 @@ namespace MicroKnights.IO.Streams
 			return stream;
         }
 
-		public Task StartReadAHead() {
+		public Task StartReadAhead() {
             return Task.Run(() => ReadAheadChunks());
 		}
 		

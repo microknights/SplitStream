@@ -11,7 +11,7 @@ Split up the inbounding stream into multiple streams that can be read concurrent
     using (var inputSha1Stream = inputSplitStream.GetForwardReadOnlyStream())
     using (var outputSha1Stream = SHA1.Create())
     {
-        inputSplitStream.StartReadAHead();
+        inputSplitStream.StartReadAhead();
 
         Parallel.Invoke(
             () => {
