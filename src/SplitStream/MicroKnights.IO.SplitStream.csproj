@@ -5,9 +5,13 @@
     <AssemblyName>MicroKnights.IO</AssemblyName>
     <RootNamespace>MicroKnights.IO.Streams</RootNamespace>
     <PackageId>MicroKnights.IO.SplitStream</PackageId>
-    <Authors>Frank løvendahl Nielsen</Authors>
+    <Authors>Frank Løvendahl Nielsen</Authors>
     <Company>MicroKnights</Company>
     <Product />
+    <PackageProjectUrl>https://github.com/microknights/SplitStream</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/microknights/SplitStream</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>Split stream into multiple streams that can be read concurrently</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
