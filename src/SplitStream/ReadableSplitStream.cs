@@ -60,6 +60,9 @@ namespace MicroKnights.IO.Streams
                 else
                 {
                     PushChunkToStreams(null);
+#if DEBUG
+                    DebugWaitAfterReadingSourceStreamChunk();
+#endif
                     _finished = true;
                 }
             } while (_finished == false);
@@ -68,6 +71,13 @@ namespace MicroKnights.IO.Streams
 #if DEBUG
         protected virtual void DebugWaitBeforeReadingSourceStreamChunk()
         {
+        }
+#endif
+
+#if DEBUG
+        protected virtual void DebugWaitAfterReadingSourceStreamChunk()
+        {
+            Task.Delay(10000).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 #endif
 
