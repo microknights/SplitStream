@@ -12,6 +12,8 @@
     <RepositoryUrl>https://github.com/microknights/SplitStream</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Split stream into multiple streams that can be read concurrently</PackageReleaseNotes>
+    <Version>1.1.0-beta1</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

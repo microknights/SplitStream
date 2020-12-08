@@ -7,6 +7,7 @@ namespace MicroKnights.IO.Streams
 {
     public class ForwaredReadOnlyChunkStream : Stream
     {
+        private readonly SplitStreamOptions _options;
         private readonly ConcurrentQueue<StreamChunk> _queueChunks;
         private readonly ManualResetEventSlim _queueWaiter = new ManualResetEventSlim(false, 10);
 
@@ -15,7 +16,13 @@ namespace MicroKnights.IO.Streams
         private int _position = 0;
 
         public ForwaredReadOnlyChunkStream()
+        : this(SplitStreamOptions.Default)
         {
+        }
+
+        public ForwaredReadOnlyChunkStream(SplitStreamOptions options)
+        {
+            _options = options;
             _queueChunks = new ConcurrentQueue<StreamChunk>();
         }
 
@@ -101,7 +108,7 @@ namespace MicroKnights.IO.Streams
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && IsFinised == false )
+            if (disposing && _options.SanityCheckOnDispose && IsFinised == false )
             {
                 throw new ObjectDisposedException("Stream not read to end");
             }

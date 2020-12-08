@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using MicroKnights.IO.Streams;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -39,8 +40,11 @@ namespace MicroKnights.IO.Test
         private const string Sha384 = "6c7da21238be126f16d39ae129619eb3a18a4d69c2d835eaf99c69a2bdc3b2e7a1bd41dd310da92e97bf795f07177a7";
         private const string Sha512 = "3f15a970d9115ef238cc2b6ecc2ae2854b8914016f71d8465d59d77d7f763c6d7316a7b799035bc12d2bbd5186ae67de473cfb7f53ddc5c672b848943bbccfb";
 
-        [Fact]
-        public async Task TestParallelStreams()
+        [Theory]
+        // [InlineData(0,13)]
+        // [InlineData(13,0)]
+        [InlineData(0,0)]
+        public async Task TestParallelStreams(int splitStreamMaxSleepMilliseconds, int forwardReadOnlyMaxSleepMilliseconds)
         {
             Directory.CreateDirectory(_workingDirectory);
             DeleteTestFiles(_workingDirectory);
@@ -64,7 +68,7 @@ namespace MicroKnights.IO.Test
 
             using (var inputSourceStream = new MemoryStream(fileBytes))
             // Source.Reader faster then Split.Readers
-            using (var inputSplitStream = new DebuggableReadableSplitStream(0, 2345, inputSourceStream))
+            using (var inputSplitStream = new DebuggableReadableSplitStream(splitStreamMaxSleepMilliseconds, forwardReadOnlyMaxSleepMilliseconds, inputSourceStream, SplitStreamOptions.Default))
             // Source.Reader slower then Split.Readers
             //            using (var splitStream = new DebuggableReadableSplitStream(2345,234,inputStream))
 
@@ -210,8 +214,11 @@ namespace MicroKnights.IO.Test
             }
         }
 
-        [Fact]
-        public async Task TestTaskStreams()
+        [Theory]
+        // [InlineData(0, 13)]
+        // [InlineData(13, 0)]
+        [InlineData(0, 0)]
+        public async Task TestTaskStreams(int splitStreamMaxSleepMilliseconds, int forwardReadOnlyMaxSleepMilliseconds)
         {
             Directory.CreateDirectory(_workingDirectory);
             DeleteTestFiles(_workingDirectory);
@@ -235,7 +242,7 @@ namespace MicroKnights.IO.Test
             var tasks = new List<Task>();
             using (var inputSourceStream = new MemoryStream(fileBytes))
             // Source.Reader faster then Split.Readers
-            using (var inputSplitStream = new DebuggableReadableSplitStream(0, 2345, inputSourceStream))
+            using (var inputSplitStream = new DebuggableReadableSplitStream(splitStreamMaxSleepMilliseconds, forwardReadOnlyMaxSleepMilliseconds, inputSourceStream, SplitStreamOptions.Default))
             // Source.Reader slower then Split.Readers
             //            using (var splitStream = new DebuggableReadableSplitStream(2345,234,inputStream))
 

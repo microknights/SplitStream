@@ -15,7 +15,8 @@ namespace MicroKnights.IO.Test
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            Thread.Sleep(_random.Next(_maxSleepMilliseconds));
+            if (_maxSleepMilliseconds > 0)
+                Thread.Sleep(_random.Next(_maxSleepMilliseconds));
 
             return base.Read(buffer, offset, count);
         }
