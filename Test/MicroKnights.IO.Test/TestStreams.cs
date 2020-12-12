@@ -43,7 +43,7 @@ namespace MicroKnights.IO.Test
         [Theory]
         // [InlineData(0,13)]
         // [InlineData(13,0)]
-        [InlineData(0,0)]
+        [InlineData(0, 0)]
         public async Task TestParallelStreams(int splitStreamMaxSleepMilliseconds, int forwardReadOnlyMaxSleepMilliseconds)
         {
             Directory.CreateDirectory(_workingDirectory);
@@ -67,10 +67,10 @@ namespace MicroKnights.IO.Test
 
 
             using (var inputSourceStream = new MemoryStream(fileBytes))
-            // Source.Reader faster then Split.Readers
+                // Source.Reader faster then Split.Readers
             using (var inputSplitStream = new DebuggableReadableSplitStream(splitStreamMaxSleepMilliseconds, forwardReadOnlyMaxSleepMilliseconds, inputSourceStream, SplitStreamOptions.Default))
-            // Source.Reader slower then Split.Readers
-            //            using (var splitStream = new DebuggableReadableSplitStream(2345,234,inputStream))
+                // Source.Reader slower then Split.Readers
+                //            using (var splitStream = new DebuggableReadableSplitStream(2345,234,inputStream))
 
             using (var inputFileStream = inputSplitStream.GetForwardReadOnlyStream())
             using (var outputFileStream = File.OpenWrite(Path.Combine(_workingDirectory, "outputTestFile.pdf")))
@@ -106,96 +106,84 @@ namespace MicroKnights.IO.Test
                 var readAheadTask = inputSplitStream.StartReadAhead();
 
                 Parallel.Invoke(() =>
-                {
-                    var bytes = outputSha1Stream.ComputeHash(inputSha1Stream);
-                    checksumSha1 = string.Join("", bytes.Select(x => x.ToString("x")));
-                    var filename = Path.Combine(_workingDirectory, $"SHA1_{checksumSha1}.bin"); // 1fe0fda07f9a87b6908e69ef586c21b4833acb5
-                    File.WriteAllBytes(filename, bytes);
-                },
-                () =>
-                {
-                    inputStress1Stream.CopyTo(Stream.Null);
-                },
-                () =>
-                {
-                    var bytes = outputSha512Stream.ComputeHash(inputSha512Stream);
-                    checksumSha512 = string.Join("", bytes.Select(x => x.ToString("x")));
-                    var filename = Path.Combine(_workingDirectory, $"SHA512_{checksumSha512}.bin"); // 3f15a970d9115ef238cc2b6ecc2ae2854b8914016f71d8465d59d77d7f763c6d7316a7b799035bc12d2bbd5186ae67de473cfb7f53ddc5c672b848943bbccfb
-                    File.WriteAllBytes(filename, bytes);
-                },
-                () =>
-                {
-                    var buffer = new byte[1234];
-                    var length = -1;
-                    while (length != 0)
                     {
-                        length = inputMemoryStream1.Read(buffer, 0, buffer.Length);
-                        if (length > 0)
-                        {
-                            Thread.Sleep(42);
-                            outputMemoryStream1.Write(buffer, 0, length);
-                        }
-                    }
-                },
-                () =>
-                {
-                    inputStress2Stream.CopyTo(Stream.Null);
-                },
-                () =>
-                {
-                    var buffer = new byte[42];
-                    var length = -1;
-                    while (length != 0)
+                        var bytes = outputSha1Stream.ComputeHash(inputSha1Stream);
+                        checksumSha1 = string.Join("", bytes.Select(x => x.ToString("x")));
+                        var filename = Path.Combine(_workingDirectory, $"SHA1_{checksumSha1}.bin"); // 1fe0fda07f9a87b6908e69ef586c21b4833acb5
+                        File.WriteAllBytes(filename, bytes);
+                    },
+                    () => { inputStress1Stream.CopyTo(Stream.Null); },
+                    () =>
                     {
-                        length = inputMemoryStream2.Read(buffer, 0, buffer.Length);
-                        if (length > 0)
-                        {
-                            outputMemoryStream2.Write(buffer, 0, length);
-                        }
-                    }
-                },
-                () =>
-                {
-                    var bytes = outputSha256Stream.ComputeHash(inputSha256Stream);
-                    checksumSha256 = string.Join("", bytes.Select(x => x.ToString("x")));
-                    var filename = Path.Combine(_workingDirectory, $"SHA256_{checksumSha256}.bin"); // 22a84bad77d526b32768ceee50714b954da14d32f0efee5faeb0435f8e1a6f82 
-                    File.WriteAllBytes(filename, bytes);
-                },
-                () =>
-                {
-                    var bytes = outputMd5Stream.ComputeHash(inputMd5Stream);
-                    checksumMd5 = string.Join("", bytes.Select(x => x.ToString("x")));
-                    var filename = Path.Combine(_workingDirectory, $"MD5_{checksumMd5}.bin"); // 9b42ca5c1fb11fe5c9a52c193360de68
-                    File.WriteAllBytes(filename, bytes);
-                },
-                () =>
-                {
-                    inputStress3Stream.CopyTo(Stream.Null);
-                },
-                () =>
-                {
-                    var bytes = outputSha384Stream.ComputeHash(inputSha384Stream);
-                    checksumSha384 = string.Join("", bytes.Select(x => x.ToString("x")));
-                    var filename = Path.Combine(_workingDirectory, $"SHA384_{checksumSha384}.bin"); // 6c7da21238be126f16d39ae129619eb3a18a4d69c2d835eaf99c69a2bdc3b2e7a1bd41dd310da92e97bf795f07177a7
-                    File.WriteAllBytes(filename, bytes);
-                },
-                () =>
-                {
-                    var buffer = new byte[7];
-                    var length = -1;
-                    while (length != 0)
+                        var bytes = outputSha512Stream.ComputeHash(inputSha512Stream);
+                        checksumSha512 = string.Join("", bytes.Select(x => x.ToString("x")));
+                        var filename = Path.Combine(_workingDirectory, $"SHA512_{checksumSha512}.bin"); // 3f15a970d9115ef238cc2b6ecc2ae2854b8914016f71d8465d59d77d7f763c6d7316a7b799035bc12d2bbd5186ae67de473cfb7f53ddc5c672b848943bbccfb
+                        File.WriteAllBytes(filename, bytes);
+                    },
+                    () =>
                     {
-                        length = inputMemoryStream3.Read(buffer, 0, buffer.Length);
-                        if (length > 0)
+                        var buffer = new byte[1234];
+                        var length = -1;
+                        while (length != 0)
                         {
-                            outputMemoryStream3.Write(buffer, 0, length);
+                            length = inputMemoryStream1.Read(buffer, 0, buffer.Length);
+                            if (length > 0)
+                            {
+                                Thread.Sleep(42);
+                                outputMemoryStream1.Write(buffer, 0, length);
+                            }
                         }
-                    }
-                },
-                () =>
-                {
-                    inputFileStream.CopyTo(outputFileStream);
-                });
+                    },
+                    () => { inputStress2Stream.CopyTo(Stream.Null); },
+                    () =>
+                    {
+                        var buffer = new byte[42];
+                        var length = -1;
+                        while (length != 0)
+                        {
+                            length = inputMemoryStream2.Read(buffer, 0, buffer.Length);
+                            if (length > 0)
+                            {
+                                outputMemoryStream2.Write(buffer, 0, length);
+                            }
+                        }
+                    },
+                    () =>
+                    {
+                        var bytes = outputSha256Stream.ComputeHash(inputSha256Stream);
+                        checksumSha256 = string.Join("", bytes.Select(x => x.ToString("x")));
+                        var filename = Path.Combine(_workingDirectory, $"SHA256_{checksumSha256}.bin"); // 22a84bad77d526b32768ceee50714b954da14d32f0efee5faeb0435f8e1a6f82 
+                        File.WriteAllBytes(filename, bytes);
+                    },
+                    () =>
+                    {
+                        var bytes = outputMd5Stream.ComputeHash(inputMd5Stream);
+                        checksumMd5 = string.Join("", bytes.Select(x => x.ToString("x")));
+                        var filename = Path.Combine(_workingDirectory, $"MD5_{checksumMd5}.bin"); // 9b42ca5c1fb11fe5c9a52c193360de68
+                        File.WriteAllBytes(filename, bytes);
+                    },
+                    () => { inputStress3Stream.CopyTo(Stream.Null); },
+                    () =>
+                    {
+                        var bytes = outputSha384Stream.ComputeHash(inputSha384Stream);
+                        checksumSha384 = string.Join("", bytes.Select(x => x.ToString("x")));
+                        var filename = Path.Combine(_workingDirectory, $"SHA384_{checksumSha384}.bin"); // 6c7da21238be126f16d39ae129619eb3a18a4d69c2d835eaf99c69a2bdc3b2e7a1bd41dd310da92e97bf795f07177a7
+                        File.WriteAllBytes(filename, bytes);
+                    },
+                    () =>
+                    {
+                        var buffer = new byte[7];
+                        var length = -1;
+                        while (length != 0)
+                        {
+                            length = inputMemoryStream3.Read(buffer, 0, buffer.Length);
+                            if (length > 0)
+                            {
+                                outputMemoryStream3.Write(buffer, 0, length);
+                            }
+                        }
+                    },
+                    () => { inputFileStream.CopyTo(outputFileStream); });
 
                 await readAheadTask; // we only wait, if exceptions is thrown.
                 Assert.True(readAheadTask.IsCompletedSuccessfully, "IsCompletedSuccessfully");
@@ -241,10 +229,10 @@ namespace MicroKnights.IO.Test
 
             var tasks = new List<Task>();
             using (var inputSourceStream = new MemoryStream(fileBytes))
-            // Source.Reader faster then Split.Readers
+                // Source.Reader faster then Split.Readers
             using (var inputSplitStream = new DebuggableReadableSplitStream(splitStreamMaxSleepMilliseconds, forwardReadOnlyMaxSleepMilliseconds, inputSourceStream, SplitStreamOptions.Default))
-            // Source.Reader slower then Split.Readers
-            //            using (var splitStream = new DebuggableReadableSplitStream(2345,234,inputStream))
+                // Source.Reader slower then Split.Readers
+                //            using (var splitStream = new DebuggableReadableSplitStream(2345,234,inputStream))
 
             using (var inputFileStream = inputSplitStream.GetForwardReadOnlyStream())
             using (var outputFileStream = File.OpenWrite(Path.Combine(_workingDirectory, "outputTestFile.pdf")))
@@ -286,10 +274,7 @@ namespace MicroKnights.IO.Test
                     var filename = Path.Combine(_workingDirectory, $"SHA1_{checksumSha1}.bin"); // 1fe0fda07f9a87b6908e69ef586c21b4833acb5
                     File.WriteAllBytes(filename, bytes);
                 }));
-                tasks.Add(Task.Run(() =>
-                {
-                    inputStress1Stream.CopyTo(Stream.Null);
-                }));
+                tasks.Add(Task.Run(() => { inputStress1Stream.CopyTo(Stream.Null); }));
                 tasks.Add(Task.Run(() =>
                 {
                     var bytes = outputSha512Stream.ComputeHash(inputSha512Stream);
@@ -311,10 +296,7 @@ namespace MicroKnights.IO.Test
                         }
                     }
                 }));
-                tasks.Add(Task.Run(() =>
-                {
-                    inputStress2Stream.CopyTo(Stream.Null);
-                }));
+                tasks.Add(Task.Run(() => { inputStress2Stream.CopyTo(Stream.Null); }));
                 tasks.Add(Task.Run(() =>
                 {
                     var buffer = new byte[42];
@@ -342,10 +324,7 @@ namespace MicroKnights.IO.Test
                     var filename = Path.Combine(_workingDirectory, $"MD5_{checksumMd5}.bin"); // 9b42ca5c1fb11fe5c9a52c193360de68
                     File.WriteAllBytes(filename, bytes);
                 }));
-                tasks.Add(Task.Run(() =>
-                {
-                    inputStress3Stream.CopyTo(Stream.Null);
-                }));
+                tasks.Add(Task.Run(() => { inputStress3Stream.CopyTo(Stream.Null); }));
                 tasks.Add(Task.Run(() =>
                 {
                     var bytes = outputSha384Stream.ComputeHash(inputSha384Stream);
@@ -366,10 +345,7 @@ namespace MicroKnights.IO.Test
                         }
                     }
                 }));
-                tasks.Add(Task.Run(() =>
-                {
-                    inputFileStream.CopyTo(outputFileStream);
-                }));
+                tasks.Add(Task.Run(() => { inputFileStream.CopyTo(outputFileStream); }));
 
                 await readAheadTask; // we only wait, if exceptions is thrown.
                 Task.WaitAll(tasks.ToArray());
@@ -390,6 +366,59 @@ namespace MicroKnights.IO.Test
             }
         }
 
+        [Theory]
+        // [InlineData(0, 13)]
+        // [InlineData(13, 0)]
+        [InlineData(0, 120, 2)]
+        public async Task TestFastReadAHeadWithSlowConsumerAndLimitiedChunks(int splitStreamMaxSleepMilliseconds, int forwardReadOnlyMaxSleepMilliseconds, int maxEnqueuedChunks)
+        {
+            Directory.CreateDirectory(_workingDirectory);
+            DeleteTestFiles(_workingDirectory);
 
+            string checksumSha512 = "";
+
+            byte[] fileBytes;
+            var assembly = GetType().GetTypeInfo().Assembly;
+            using (var inputSourceStream = assembly.GetManifestResourceStream(string.Join(".", GetType().Namespace, "Files", "ST_5419_2016_INIT_EN.pdf")))
+            using (var inputMemoryStream = new MemoryStream(ushort.MaxValue))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                await inputSourceStream.CopyToAsync(inputMemoryStream);
+                fileBytes = inputMemoryStream.ToArray();
+            }
+
+            var splitStreamOptions = SplitStreamOptions.Default;
+            splitStreamOptions.MaxEnqueuedChunks = maxEnqueuedChunks;
+
+            var tasks = new List<Task>();
+            using (var inputSourceStream = new MemoryStream(fileBytes))
+                // Source.Reader faster then Split.Readers
+            using (var inputSplitStream = new DebuggableReadableSplitStream(splitStreamMaxSleepMilliseconds, forwardReadOnlyMaxSleepMilliseconds, inputSourceStream, splitStreamOptions))
+                // Source.Reader slower then Split.Readers
+                //            using (var splitStream = new DebuggableReadableSplitStream(2345,234,inputStream))
+
+            using (var inputSha512Stream = inputSplitStream.GetForwardReadOnlyStream())
+            using (var outputSha512Stream = SHA512.Create())
+            {
+                var readAheadTask = inputSplitStream.StartReadAhead();
+
+                tasks.Add(Task.Run(() =>
+                {
+                    var bytes = outputSha512Stream.ComputeHash(inputSha512Stream);
+                    checksumSha512 = string.Join("", bytes.Select(x => x.ToString("x")));
+                    var filename = Path.Combine(_workingDirectory, $"SHA512_{checksumSha512}.bin"); // 3f15a970d9115ef238cc2b6ecc2ae2854b8914016f71d8465d59d77d7f763c6d7316a7b799035bc12d2bbd5186ae67de473cfb7f53ddc5c672b848943bbccfb
+                    File.WriteAllBytes(filename, bytes);
+                }));
+
+                await readAheadTask; // we only wait, if exceptions is thrown.
+                Task.WaitAll(tasks.ToArray());
+
+                Assert.True(readAheadTask.IsCompletedSuccessfully, "IsCompletedSuccessfully");
+
+                Assert.True(checksumSha512 == Sha512, "Sha512 Error");
+
+                _output.WriteLine($"WorkingDirectory: {_workingDirectory}");
+            }
+        }
     }
 }
