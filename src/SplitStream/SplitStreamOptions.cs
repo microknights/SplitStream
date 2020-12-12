@@ -4,6 +4,7 @@
     {
         public int ChunkSize { get; set; }
         public bool SanityCheckOnDispose { get; set; }
+        public int MaxEnqueuedChunks { get; set; }
 
         public SplitStreamOptions SetChunkSize(int chunkSize)
         {
@@ -14,7 +15,8 @@
         public static SplitStreamOptions Default => new SplitStreamOptions
         {
             SanityCheckOnDispose = false,
-            ChunkSize = ushort.MaxValue
+            ChunkSize = ushort.MaxValue,
+            MaxEnqueuedChunks = int.MaxValue
         };
     }
 }

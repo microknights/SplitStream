@@ -10,6 +10,7 @@ namespace MicroKnights.IO.Streams
         private readonly SplitStreamOptions _options;
         private readonly ConcurrentQueue<StreamChunk> _queueChunks;
         private readonly ManualResetEventSlim _queueWaiter = new ManualResetEventSlim(false, 10);
+        private readonly SemaphoreSlim _maxEnqueuedChunksSemaphore;
 
         private StreamChunk _chunk = null;
         private bool _finished = false;
@@ -24,6 +25,8 @@ namespace MicroKnights.IO.Streams
         {
             _options = options;
             _queueChunks = new ConcurrentQueue<StreamChunk>();
+            _maxEnqueuedChunksSemaphore = 
+                new SemaphoreSlim(_options.MaxEnqueuedChunks, _options.MaxEnqueuedChunks);
         }
 
         #region Overrides of Stream
@@ -59,6 +62,7 @@ namespace MicroKnights.IO.Streams
 
         public void PushChunk(StreamChunk chunk)
         {
+            _maxEnqueuedChunksSemaphore.Wait();
             _queueChunks.Enqueue(chunk);
             _queueWaiter.Set();
         }
@@ -71,6 +75,7 @@ namespace MicroKnights.IO.Streams
                 _queueWaiter.Wait(cancellationToken);
             }
             _queueWaiter.Reset();
+            _maxEnqueuedChunksSemaphore.Release();
             return chunk;
         }
 
